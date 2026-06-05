@@ -16,6 +16,15 @@
         <input type="text" id="nameInput" placeholder="Tu nombre..." maxlength="15" autofocus>
         <button id="joinBtn" class="btn-primary">UNIRSE</button>
       </div>
+      <div class="difficulty-selector">
+        <p class="difficulty-label">Dificultad</p>
+        <div class="difficulty-buttons">
+          <button class="diff-btn" data-level="facil">Nivel 1</button>
+          <button class="diff-btn active" data-level="medio">Nivel 2</button>
+          <button class="diff-btn" data-level="dificil">Nivel 3</button>
+          <button class="diff-btn god" data-level="dios">Nivel Dios</button>
+        </div>
+      </div>
       <div id="waitingPlayers" class="waiting-players">
         <p>Esperando jugadores...</p>
         <div id="playerList"></div>

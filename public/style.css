@@ -97,6 +97,55 @@ body {
   transform: translateY(0);
 }
 
+/* ─── Difficulty Selector ─────────────────────────────────── */
+.difficulty-selector {
+  margin-bottom: 20px;
+}
+.difficulty-label {
+  color: #6666aa;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.difficulty-buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.diff-btn {
+  padding: 8px 16px;
+  border: 2px solid #2a2a55;
+  border-radius: 8px;
+  background: #12122a;
+  color: #8888cc;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.diff-btn:hover {
+  border-color: #5555cc;
+  color: #bbb;
+}
+.diff-btn.active {
+  background: #1a1a55;
+  border-color: #6666ff;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(85,85,255,0.3);
+}
+.diff-btn.god {
+  border-color: #882222;
+  color: #cc6666;
+}
+.diff-btn.god.active {
+  background: #331111;
+  border-color: #ff4444;
+  color: #ff6666;
+  box-shadow: 0 0 16px rgba(255,68,68,0.4);
+}
+
 .waiting-players {
   margin: 16px 0;
   color: #6666aa;
@@ -172,7 +221,7 @@ body {
 .lane-labels {
   display: flex;
   gap: 0;
-  width: 630px;
+  width: 700px;
   justify-content: space-around;
   padding: 4px 0;
   background: #111128;
@@ -310,6 +359,13 @@ body {
 }
 .hit-feedback.ok {
   color: #4d96ff;
+}
+.hit-feedback.bad {
+  color: #cc8855;
+}
+.hit-feedback.early {
+  color: #aa66cc;
+  font-size: 1.5rem;
 }
 
 /* ─── Countdown ───────────────────────────────────────────── */

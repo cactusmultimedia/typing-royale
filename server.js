@@ -7,8 +7,17 @@ const url = require('url');
 // ─── Config ────────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;
 const LANES = 'ASDFGHJKLÑ';  // 10 teclas — fila central español
-const NOTE_SPEED = 0.6;       // px por tick (~16ms)
-const SPAWN_INTERVAL_MS = 800;
+
+const DIFFICULTIES = {
+  facil:     { name: 'Nivel 1', noteSpeed: 0.35, spawnMs: 1200 },
+  medio:     { name: 'Nivel 2', noteSpeed: 0.55, spawnMs: 900 },
+  dificil:   { name: 'Nivel 3', noteSpeed: 0.80, spawnMs: 650 },
+  dios:      { name: 'Nivel Dios', noteSpeed: 1.15, spawnMs: 450 },
+};
+
+let currentDifficulty = 'medio';
+let NOTE_SPEED = DIFFICULTIES.medio.noteSpeed;
+let SPAWN_INTERVAL_MS = DIFFICULTIES.medio.spawnMs;
 const HIT_ZONE_Y = 520;       // donde el jugador debe presionar
 const MISS_Y = 580;            // si pasa esto, se considera fallo
 
@@ -219,11 +228,12 @@ function handleKeyPress(ws, playerId, { key }) {
   } else if (bestDist < 110) {
     points = 100;
     rating = 'ok';
-  } else if (bestDist < 160) {
+  } else if (bestDist < 200) {
     points = 50;
     rating = 'bad';
   } else {
-    return; // demasiado lejos, no cuenta
+    points = 20;
+    rating = 'early'; // reventada lejana
   }
 
   if (!player.hitNotes) player.hitNotes = new Set();
@@ -265,6 +275,9 @@ wss.on('connection', (ws) => {
     type: 'welcome',
     playerId,
     phase: gameState.phase,
+    difficulty: currentDifficulty,
+    difficultyName: DIFFICULTIES[currentDifficulty].name,
+    difficulties: Object.keys(DIFFICULTIES),
     players: Array.from(gameState.players.entries()).map(([id, p]) => ({
       id, name: p.name, score: p.score,
     })),
@@ -323,6 +336,20 @@ wss.on('connection', (ws) => {
           if (gameState.spawnTimer) clearInterval(gameState.spawnTimer);
           if (gameState.gameLoop) clearInterval(gameState.gameLoop);
           startGame();
+        }
+        break;
+      }
+
+      case 'setDifficulty': {
+        if (gameState.phase === 'waiting' && DIFFICULTIES[data.level]) {
+          currentDifficulty = data.level;
+          NOTE_SPEED = DIFFICULTIES[data.level].noteSpeed;
+          SPAWN_INTERVAL_MS = DIFFICULTIES[data.level].spawnMs;
+          broadcast({
+            type: 'difficultyChanged',
+            level: currentDifficulty,
+            name: DIFFICULTIES[currentDifficulty].name,
+          });
         }
         break;
       }

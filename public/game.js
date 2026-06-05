@@ -33,6 +33,7 @@ let playerName = '';
 let ws = null;
 let gamePhase = 'waiting';
 let connected = false;
+let currentDifficulty = 'medio';
 
 // Jugadores locales (datos visibles)
 let players = [];
@@ -71,10 +72,18 @@ function handleMessage(data) {
     case 'welcome': {
       playerId = data.playerId;
       gamePhase = data.phase;
+      currentDifficulty = data.difficulty || 'medio';
+      updateDifficultyButtons(currentDifficulty);
       if (data.players) {
         players = data.players;
         updatePlayerList();
       }
+      break;
+    }
+
+    case 'difficultyChanged': {
+      currentDifficulty = data.level;
+      updateDifficultyButtons(data.level);
       break;
     }
 
@@ -162,6 +171,26 @@ nameInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') joinBtn.click();
 });
 
+// ─── Dificultad ────────────────────────────────────────────
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const level = btn.dataset.level;
+    if (!connected || !playerId) {
+      // Aún no conectado, solo marca visual
+      currentDifficulty = level;
+      updateDifficultyButtons(level);
+      return;
+    }
+    ws.send(JSON.stringify({ type: 'setDifficulty', level }));
+  });
+});
+
+function updateDifficultyButtons(level) {
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.level === level);
+  });
+}
+
 // ─── UI: Countdown ─────────────────────────────────────────
 function showCountdown() {
   lobby.classList.remove('active');
@@ -226,6 +255,7 @@ function showHitFeedback(rating) {
     good: '¡BIEN!',
     ok: 'OK',
     bad: 'MAL',
+    early: 'REVENTADA',
   };
 
   hitFeedback.textContent = labels[rating] || rating;
