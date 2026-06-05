@@ -2,6 +2,7 @@ const { WebSocketServer } = require('ws');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 // ─── Config ────────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;
@@ -36,12 +37,24 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
-  let filePath = path.join(__dirname, 'public', req.url === '/' ? 'index.html' : req.url);
+  const parsedUrl = url.parse(req.url);
+  let pathname = parsedUrl.pathname === '/' ? '/index.html' : parsedUrl.pathname;
+
+  const filePath = path.join(__dirname, 'public', pathname);
+
+  // Prevenir path traversal
+  if (!filePath.startsWith(path.join(__dirname, 'public'))) {
+    res.writeHead(403);
+    res.end('Forbidden');
+    return;
+  }
+
   const ext = path.extname(filePath);
   const mime = mimeTypes[ext] || 'application/octet-stream';
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
+      console.error(`404: ${filePath} (${err.code})`);
       res.writeHead(404, { 'Content-Type': 'text/html' });
       res.end('<h1>404 - Not Found</h1>');
       return;
