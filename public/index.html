@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⌨️ Typing Royale</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Pantalla de ingreso -->
+  <div id="lobby" class="screen active">
+    <div class="lobby-content">
+      <h1 class="game-title">⌨️ TYPING ROYALE</h1>
+      <p class="subtitle">Guitar Hero de Mecanografía — Multijugador en Tiempo Real</p>
+      <div class="name-input-group">
+        <input type="text" id="nameInput" placeholder="Tu nombre..." maxlength="15" autofocus>
+        <button id="joinBtn" class="btn-primary">UNIRSE</button>
+      </div>
+      <div id="waitingPlayers" class="waiting-players">
+        <p>Esperando jugadores...</p>
+        <div id="playerList"></div>
+      </div>
+      <div class="instructions">
+        <h3>🎮 Cómo jugar</h3>
+        <p>Presiona la tecla correcta cuando la nota llegue a la zona de impacto.</p>
+        <p>¡Más preciso = más puntos! Las rachas de aciertos multiplican tu puntuación.</p>
+        <div class="keys-row">
+          <span class="key">A</span>
+          <span class="key">S</span>
+          <span class="key">D</span>
+          <span class="key">F</span>
+          <span class="key">G</span>
+          <span class="key">H</span>
+          <span class="key">J</span>
+          <span class="key">K</span>
+          <span class="key">L</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla de juego -->
+  <div id="gameScreen" class="screen">
+    <div id="countdown" class="countdown hidden">3</div>
+    <div class="game-container">
+      <div class="lane-labels">
+        <span>A</span><span>S</span><span>D</span><span>F</span><span>G</span>
+        <span>H</span><span>J</span><span>K</span><span>L</span>
+      </div>
+      <canvas id="gameCanvas" width="630" height="600"></canvas>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="player-info">
+        <h3>⌨️ TYPING ROYALE</h3>
+        <div id="myStats" class="stats-box">
+          <div class="stat"><span class="stat-label">Puntuación</span><span id="myScore" class="stat-value">0</span></div>
+          <div class="stat"><span class="stat-label">Racha</span><span id="myCombo" class="stat-value">0x</span></div>
+          <div class="stat"><span class="stat-label">Perfectos</span><span id="myPerfects" class="stat-value">0</span></div>
+          <div class="stat"><span class="stat-label">Fallos</span><span id="myMisses" class="stat-value">0</span></div>
+        </div>
+      </div>
+      <div class="leaderboard">
+        <h3>🏆 CLASIFICACIÓN</h3>
+        <div id="leaderboardList"></div>
+      </div>
+    </div>
+    <div id="hitFeedback" class="hit-feedback"></div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

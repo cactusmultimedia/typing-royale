@@ -1,0 +1,395 @@
+/* ─── Reset & Base ────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a1a;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ─── Screens ────────────────────────────────────────────── */
+.screen {
+  display: none;
+  width: 100%;
+  height: 100vh;
+}
+.screen.active {
+  display: flex;
+}
+
+/* ─── Lobby ──────────────────────────────────────────────── */
+#lobby {
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 70%);
+}
+
+.lobby-content {
+  text-align: center;
+  max-width: 520px;
+  padding: 40px;
+}
+
+.game-title {
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #8888aa;
+  margin-bottom: 32px;
+  font-size: 1rem;
+}
+
+.name-input-group {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.name-input-group input {
+  padding: 12px 20px;
+  border: 2px solid #3333aa;
+  border-radius: 8px;
+  background: #12122a;
+  color: #fff;
+  font-size: 1.1rem;
+  width: 220px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.name-input-group input:focus {
+  border-color: #5555ff;
+}
+
+.btn-primary {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #5555ff, #8833ff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(85, 85, 255, 0.4);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.waiting-players {
+  margin: 16px 0;
+  color: #6666aa;
+}
+#playerList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.player-chip {
+  background: #1a1a44;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #aaaaff;
+  border: 1px solid #3333aa;
+}
+
+.instructions {
+  margin-top: 32px;
+  padding: 20px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  border: 1px solid #222244;
+}
+.instructions h3 {
+  color: #ffd93d;
+  margin-bottom: 8px;
+}
+.instructions p {
+  color: #8888aa;
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+.keys-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 12px;
+}
+.keys-row .key {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a44;
+  border: 2px solid #4444cc;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #aaaaff;
+}
+
+/* ─── Game Screen ─────────────────────────────────────────── */
+#gameScreen {
+  flex-direction: row;
+  background: #0a0a1a;
+  position: relative;
+}
+
+.game-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lane-labels {
+  display: flex;
+  gap: 0;
+  width: 630px;
+  justify-content: space-around;
+  padding: 4px 0;
+  background: #111128;
+  border: 1px solid #252550;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+.lane-labels span {
+  width: 70px;
+  text-align: center;
+  font-weight: 700;
+  color: #5555aa;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+#gameCanvas {
+  border: 1px solid #252550;
+  border-top: none;
+  background: #0d0d22;
+  display: block;
+}
+
+.hit-zone-indicator {
+  width: 630px;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, transparent);
+  opacity: 0.6;
+  position: absolute;
+  top: calc(50% + 100px);
+  pointer-events: none;
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────── */
+.sidebar {
+  width: 280px;
+  padding: 20px;
+  background: #0e0e24;
+  border-left: 1px solid #1a1a44;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+.sidebar h3 {
+  font-size: 0.9rem;
+  color: #6666bb;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.stats-box {
+  background: #13132e;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid #1a1a3a;
+}
+.stat:last-child {
+  border-bottom: none;
+}
+.stat-label {
+  color: #6666aa;
+  font-size: 0.85rem;
+}
+.stat-value {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ─── Leaderboard ─────────────────────────────────────────── */
+.leaderboard {
+  flex: 1;
+}
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin: 4px 0;
+  border-radius: 8px;
+  background: #13132e;
+  transition: background 0.3s;
+}
+.leaderboard-item.me {
+  background: #1a1a55;
+  border: 1px solid #4444cc;
+}
+.leaderboard-rank {
+  width: 24px;
+  font-weight: 700;
+  color: #8888cc;
+}
+.leaderboard-rank.gold { color: #ffd93d; }
+.leaderboard-rank.silver { color: #c0c0c0; }
+.leaderboard-rank.bronze { color: #cd7f32; }
+.leaderboard-name {
+  flex: 1;
+  font-size: 0.9rem;
+}
+.leaderboard-score {
+  font-weight: 700;
+  color: #6bcb77;
+}
+
+/* ─── Hit Feedback ────────────────────────────────────────── */
+.hit-feedback {
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-size: 2rem;
+  font-weight: 900;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.hit-feedback.show {
+  opacity: 1;
+}
+.hit-feedback.perfect {
+  color: #ffd93d;
+  text-shadow: 0 0 20px #ffd93d;
+  font-size: 2.5rem;
+}
+.hit-feedback.good {
+  color: #6bcb77;
+  text-shadow: 0 0 15px #6bcb77;
+}
+.hit-feedback.ok {
+  color: #4d96ff;
+}
+
+/* ─── Countdown ───────────────────────────────────────────── */
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 6rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(85,85,255,0.8);
+  z-index: 10;
+  pointer-events: none;
+  animation: countdownPulse 0.8s ease-out;
+}
+.countdown.hidden {
+  display: none;
+}
+
+@keyframes countdownPulse {
+  0% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+}
+
+/* ─── Combo popup ─────────────────────────────────────────── */
+.combo-popup {
+  position: fixed;
+  pointer-events: none;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #ffd93d;
+  text-shadow: 0 0 20px rgba(255,217,61,0.6);
+  animation: comboFloat 1s ease-out forwards;
+  z-index: 100;
+}
+
+@keyframes comboFloat {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  30% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-60px) scale(0.8); opacity: 0; }
+}
+
+/* ─── Puntos flotantes ────────────────────────────────────── */
+.float-score {
+  position: fixed;
+  pointer-events: none;
+  font-weight: 900;
+  font-size: 1.3rem;
+  animation: floatUp 0.8s ease-out forwards;
+  z-index: 100;
+}
+.float-score.positive { color: #6bcb77; }
+.float-score.perfect { color: #ffd93d; }
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(0.8); opacity: 1; }
+  100% { transform: translateY(-80px) scale(1); opacity: 0; }
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  #gameScreen {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-left: none;
+    border-top: 1px solid #1a1a44;
+    padding: 12px;
+  }
+  .sidebar > div {
+    flex: 1;
+    min-width: 120px;
+  }
+  .leaderboard {
+    max-height: 150px;
+  }
+}
