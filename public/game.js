@@ -1,5 +1,5 @@
 // ─── Config ────────────────────────────────────────────────
-const LANE_KEYS = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
+const LANE_KEYS = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'];
 const LANE_COUNT = LANE_KEYS.length;
 const LANE_WIDTH = 70;
 const CANVAS_WIDTH = LANE_COUNT * LANE_WIDTH; // 630

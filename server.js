@@ -6,7 +6,7 @@ const url = require('url');
 
 // ─── Config ────────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;
-const LANES = 'ASDFGHJKL';   // 9 teclas en fila central
+const LANES = 'ASDFGHJKLÑ';  // 10 teclas — fila central español
 const NOTE_SPEED = 0.6;       // px por tick (~16ms)
 const SPAWN_INTERVAL_MS = 800;
 const HIT_ZONE_Y = 520;       // donde el jugador debe presionar
