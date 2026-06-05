@@ -40,7 +40,7 @@ let players = [];
 let notes = [];
 
 // Mis estadísticas locales (para respuesta instantánea)
-let myStats = { score: 0, combo: 0, perfects: 0, misses: 0, hits: 0 };
+let myStats = { score: 0, combo: 0, perfects: 0, misses: 0, hits: 0, lives: 5, eliminated: false };
 
 // Estado de teclas presionadas (para efecto visual)
 let pressedKeys = {}; // { key: timestamp }
@@ -126,7 +126,13 @@ function handleMessage(data) {
         myStats.perfects = me.perfects;
         myStats.misses = me.misses;
         myStats.hits = me.hits;
+        myStats.lives = me.lives;
+        myStats.eliminated = me.eliminated;
         updateMyStats();
+        if (me.eliminated && !myStats.eliminated) {
+          showEliminated();
+        }
+        myStats.eliminated = me.eliminated;
       }
       break;
     }
@@ -137,6 +143,15 @@ function handleMessage(data) {
         showComboPopup(data.combo);
       }
       showFloatScore(data.rating, data.points, data.combo);
+      break;
+    }
+
+    case 'wrongKey': {
+      showHitFeedback('wrong');
+      showFloatScore('wrong', -data.penalty, 0);
+      myStats.score = data.score;
+      myStats.combo = 0;
+      updateMyStats();
       break;
     }
   }
@@ -225,6 +240,22 @@ function updateMyStats() {
   myCombo.textContent = myStats.combo >= 5 ? `${myStats.combo}x 🔥` : `${myStats.combo}x`;
   myPerfects.textContent = myStats.perfects;
   myMisses.textContent = myStats.misses;
+  // Vidas como corazones
+  const livesEl = document.getElementById('myLives');
+  if (livesEl) {
+    let hearts = '';
+    for (let i = 0; i < 5; i++) {
+      hearts += i < myStats.lives ? '❤️' : '🖤';
+    }
+    livesEl.textContent = hearts || '💀';
+  }
+}
+
+function showEliminated() {
+  const overlay = document.getElementById('eliminatedOverlay');
+  if (overlay) {
+    overlay.classList.remove('hidden');
+  }
 }
 
 function updateLeaderboard() {
@@ -256,6 +287,7 @@ function showHitFeedback(rating) {
     ok: 'OK',
     bad: 'MAL',
     early: 'REVENTADA',
+    wrong: '¡FALLO!',
   };
 
   hitFeedback.textContent = labels[rating] || rating;
@@ -280,7 +312,7 @@ function showComboPopup(combo) {
 function showFloatScore(rating, points, combo) {
   const el = document.createElement('div');
   el.className = `float-score ${rating}`;
-  el.textContent = `+${points}`;
+  el.textContent = points >= 0 ? `+${points}` : `${points}`;
   el.style.left = `${window.innerWidth / 2 + Math.random() * 60 - 30}px`;
   el.style.top = `${window.innerHeight / 2 - 20}px`;
   document.body.appendChild(el);
@@ -476,8 +508,9 @@ document.addEventListener('keydown', (e) => {
   // Registrar presión visual (dura ~200ms)
   pressedKeys[key] = Date.now();
 
-  // No enviar si estamos en lobby o no conectados
+  // No enviar si estamos en lobby, no conectados, o eliminados
   if (!connected || !playerId || gamePhase !== 'playing') return;
+  if (myStats.eliminated) return;
 
   e.preventDefault();
 

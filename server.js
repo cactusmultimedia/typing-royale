@@ -20,6 +20,8 @@ let NOTE_SPEED = DIFFICULTIES.medio.noteSpeed;
 let SPAWN_INTERVAL_MS = DIFFICULTIES.medio.spawnMs;
 const HIT_ZONE_Y = 520;       // donde el jugador debe presionar
 const MISS_Y = 580;            // si pasa esto, se considera fallo
+const MAX_LIVES = 5;           // vidas por jugador
+const WRONG_KEY_PENALTY = 10;  // puntos perdidos por tecla equivocada
 
 // ─── Estado del juego ──────────────────────────────────────
 let tickCounter = 0;
@@ -107,6 +109,8 @@ function resetPlayerScores() {
     p.misses = 0;
     p.combo = 0;
     p.hits = 0;
+    p.lives = MAX_LIVES;
+    p.eliminated = false;
   });
 }
 
@@ -149,11 +153,15 @@ function gameTick() {
     note.y += NOTE_SPEED;
 
     if (note.y > MISS_Y) {
-      // Miss - todos los jugadores fallan esta nota si no la presionaron
+      // Miss - quienes no la presionaron pierden vida
       gameState.players.forEach(p => {
         if (!p.hitNotes || !p.hitNotes.has(note.id)) {
           p.misses++;
           p.combo = 0;
+          p.lives = Math.max(0, p.lives - 1);
+          if (p.lives <= 0 && !p.eliminated) {
+            p.eliminated = true;
+          }
         }
       });
       gameState.notes.splice(i, 1);
@@ -173,6 +181,8 @@ function gameTick() {
     misses: p.misses,
     combo: p.combo,
     hits: p.hits,
+    lives: p.lives,
+    eliminated: p.eliminated,
   }));
 
   // Ordenar por score descendente
@@ -193,6 +203,7 @@ function gameTick() {
 function handleKeyPress(ws, playerId, { key }) {
   const player = gameState.players.get(playerId);
   if (!player || gameState.phase !== 'playing') return;
+  if (player.eliminated) return;
 
   const upperKey = key.toUpperCase();
   const laneIdx = LANES.indexOf(upperKey);
@@ -213,7 +224,18 @@ function handleKeyPress(ws, playerId, { key }) {
     }
   }
 
-  if (!bestNote) return;
+  if (!bestNote) {
+    // Tecla equivocada: no hay nota en este carril
+    player.combo = 0;
+    player.score = Math.max(0, player.score - WRONG_KEY_PENALTY);
+    sendTo(ws, {
+      type: 'wrongKey',
+      penalty: WRONG_KEY_PENALTY,
+      combo: 0,
+      score: player.score,
+    });
+    return;
+  }
 
   // Calcular puntuación basada en precisión
   let points = 0;
@@ -301,6 +323,8 @@ wss.on('connection', (ws) => {
           misses: 0,
           combo: 0,
           hits: 0,
+          lives: MAX_LIVES,
+          eliminated: false,
           hitNotes: new Set(),
         });
 
